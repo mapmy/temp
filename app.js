@@ -3,7 +3,8 @@
  */
 var express = require('express')
 ,	path = require('path')
-,	streams = require('./app/streams.js')();
+,	streams = require('./app/streams.js')()
+,	routers = require('./app/routers.js')(streams);
 
 var favicon = require('serve-favicon')
 ,	logger = require('morgan')
@@ -42,4 +43,4 @@ var io = require('socket.io').listen(server);
 /**
  * Socket.io event handling for incoming streams
  */
-require('./app/socketHandler.js')(io, streams);
+require('./app/socketHandler.js')(io, streams, routers);

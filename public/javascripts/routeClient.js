@@ -21,6 +21,7 @@ var PeerManager = (function () {
   socket.on('message', handleMessage);
   socket.on('id', function(id) {
     localId = id;
+    socket.emit('addRouter', null);
   });
       
   function addIn(remoteId) {

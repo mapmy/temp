@@ -1,10 +1,11 @@
 var heap = require('heap');
 
-module.export = function(streams){
+module.exports = function(streams){
 
 	var router = function(id, count){
 		this.id = id;
 		this.count = count;
+		this.ids = [];
 	};
 
 	var unassigned = [];
@@ -19,9 +20,10 @@ module.export = function(streams){
 			var remoteId = unassigned.pop();
 			var lightest = routers.peek();
 			streams.setRoute(remoteId, lightest.id);
+			lightest.ids.push(remoteId);
 			lightest.count = lightest.count + 1;
 			routers.updateItem(lightest);
-			list.push(lightest.id);
+			list.push({routerId: lightest.id, remoteId: remoteId});
 		}
 		return list;
 	}
@@ -40,6 +42,7 @@ module.export = function(streams){
 				var lightest = routers.peek();
 				streams.setRoute(remoteId, lightest.id);
 				lightest.count = lightest.count + 1;
+				lightest.ids.push(remoteId);
 				routers.updateItem(lightest);
 				return {id:lightest.id};
 			}
@@ -55,12 +58,18 @@ module.export = function(streams){
 				}
 				list.push(pop);
 			}
-			if(pop!=null){
-				// To be implemented
-			}
 			list.forEach(function(item, index){
 				routers.push(item);
 			});
+			if(pop!=null){
+				// To be implemented
+				for(var i=0; i<pop.count; i++){
+					unassigned.push(pop.ids.pop());
+				}
+				if(!routers.empty()){
+					addRemotes();
+				}
+			}
 		}
 	};
 };

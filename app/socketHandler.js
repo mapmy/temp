@@ -23,7 +23,7 @@ module.exports = function(io, streams, routers) {
       
       streams.addStream(client.id, options.name); 
       var router = routers.addRemote(client.id);
-      if(id in router){
+      if('id' in router){
         client.emit('message', {
           from: router.id,
           type: 'init',
@@ -41,6 +41,7 @@ module.exports = function(io, streams, routers) {
     function leave() {
       console.log('-- ' + client.id + ' left --');
       streams.removeStream(client.id);
+      routers.removeRouter(client.id);
     }
 
     client.on('disconnect', leave);
@@ -49,9 +50,10 @@ module.exports = function(io, streams, routers) {
     client.on('addRouter', function(){
       var remoteList = routers.addRouter(client.id);
       remoteList.forEach(function(item, index){
-        var otherClient = io.sockets.connected[item];
+        cosnole.log('check if valid: '+item.id);
+        var otherClient = io.sockets.connected[item.remoteId];
         otherClient.emit('message', {
-          from: client.id,
+          from: item.routerId,
           type: 'init',
           payload: null
         });

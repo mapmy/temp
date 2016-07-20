@@ -30,6 +30,7 @@
 			})
 			.catch(Error('Failed to get access to local media.'));
 		};
+
     	camera.stop = function(){
     		return new Promise(function(resolve, reject){			
 				try {
